@@ -1,4 +1,4 @@
-import config
+import config # User provided config.py file
 import requests
 import time
 import json
@@ -12,18 +12,16 @@ while True:
     except:
         server_up = False
 
-    print("server_up: " + str(server_up))
-
     if not server_up and current_server == "main":
-        print("switching to backup")
-        r1 = requests.patch(config.api_url_1, headers=config.headers, data=json.dumps({"content":config.backup_ip}))
-        r2 = requests.patch(config.api_url_2, headers=config.headers, data=json.dumps({"content":config.backup_ip}))
+        print("Switching to backup")
+        for url in config.api_urls:
+            r = requests.patch(url, headers=config.headers, data=json.dumps({"content":config.backup_ip}))
         current_server = "backup"
 
     elif server_up and current_server == "backup":
-        print("switching to main")
-        r1 = requests.patch(config.api_url_1, headers=config.headers, data=json.dumps({"content":config.main_ip}))
-        r2 = requests.patch(config.api_url_2, headers=config.headers, data=json.dumps({"content":config.main_ip}))
+        print("Switching to main")
+        for url in config.api_urls:
+            r = requests.patch(url, headers=config.headers, data=json.dumps({"content":config.main_ip}))
         current_server = "main"
     
     time.sleep(1)
